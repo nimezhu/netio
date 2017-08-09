@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"math"
 	"net/http"
 	"os"
@@ -261,9 +260,6 @@ func ReadString(buf io.Reader) (string, error) {
 func ReadInt(buf io.Reader) (int32, error) {
 	c := make([]byte, 4)
 	_, err := buf.Read(c)
-	log.Println(binary.LittleEndian.Uint32(c))
-	log.Println(binary.Uvarint(c))
-	log.Println(binary.Varint(c))
 	return int32(binary.LittleEndian.Uint32(c)), err
 }
 func ReadUint(buf io.Reader) (uint32, error) {
