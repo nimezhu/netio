@@ -1,4 +1,4 @@
-package stream
+package netio
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"math"
 	"net/http"
 	"os"
@@ -260,14 +261,27 @@ func ReadString(buf io.Reader) (string, error) {
 func ReadInt(buf io.Reader) (int32, error) {
 	c := make([]byte, 4)
 	_, err := buf.Read(c)
+	log.Println(binary.LittleEndian.Uint32(c))
+	log.Println(binary.Uvarint(c))
+	log.Println(binary.Varint(c))
 	return int32(binary.LittleEndian.Uint32(c)), err
+}
+func ReadUint(buf io.Reader) (uint32, error) {
+	c := make([]byte, 4)
+	_, err := buf.Read(c)
+	return binary.LittleEndian.Uint32(c), err
 }
 func ReadLong(buf io.Reader) (int64, error) {
 	c := make([]byte, 8)
 	_, err := buf.Read(c)
 	r := int64(binary.LittleEndian.Uint64(c))
 	return r, err
-
+}
+func ReadUint64(buf io.Reader) (uint64, error) {
+	c := make([]byte, 8)
+	_, err := buf.Read(c)
+	r := binary.LittleEndian.Uint64(c)
+	return r, err
 }
 func ReadFloat64(buf io.Reader) (float64, error) {
 	c := make([]byte, 8)

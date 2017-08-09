@@ -1,0 +1,4 @@
+language: go
+script: go get -u github.com/nimezhu/netio/... && go test
+notifications:
+        email: false
