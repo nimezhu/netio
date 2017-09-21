@@ -8,5 +8,7 @@ const BIGBED_MAGIC = 0x8789F2EB
 func TestReadSeeker(t *testing.T) {
 	f, _ := NewReadSeeker("https://www.encodeproject.org/files/ENCFF609KNT/@@download/ENCFF609KNT.bigWig")
 	v, _ := ReadUint(f)
+	a, _ := Size("https://www.encodeproject.org/files/ENCFF609KNT/@@download/ENCFF609KNT.bigWig")
 	t.Log(v)
+	t.Log(a)
 }

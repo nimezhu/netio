@@ -38,6 +38,32 @@ type HttpReadSeeker struct {
 	bufferMap    map[int64][]byte
 }
 
+func Size(uri string) (int64, error) {
+	http, _ := regexp.Compile("^http://")
+	https, _ := regexp.Compile("^https://")
+	switch {
+	case http.MatchString(uri) || https.MatchString(uri):
+		f, err := NewHttpReadSeeker(uri)
+		defer f.Close()
+		if err != nil {
+			return int64(-1), err
+		}
+		return f.Size(), nil
+	default:
+		f, err := os.Open(uri)
+		defer f.Close()
+		if err != nil {
+			return int64(-1), err
+		}
+		fs, err := f.Stat()
+		if err != nil {
+			return int64(-1), err
+		}
+		return fs.Size(), nil
+	}
+	return int64(-1), io.ErrNoProgress
+}
+
 func NewReadSeeker(uri string) (io.ReadSeeker, error) {
 	http, _ := regexp.Compile("^http://")
 	https, _ := regexp.Compile("^https://")
