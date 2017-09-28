@@ -23,6 +23,11 @@ const (
 HttpReadSeeker:
 	implement io.ReadSeeker inferface for http server which support Range request header
 */
+type ReadSeekCloser interface {
+	io.Reader
+	io.Seeker
+	io.Closer
+}
 type MutexReadSeeker interface {
 	io.ReadSeeker
 	Lock()
@@ -63,8 +68,16 @@ func Size(uri string) (int64, error) {
 	}
 	return int64(-1), io.ErrNoProgress
 }
-func Open(uri string) (io.ReadSeeker, error) {
-	return NewReadSeeker(uri)
+func Open(uri string) (ReadSeekCloser, error) {
+	http, _ := regexp.Compile("^http://")
+	https, _ := regexp.Compile("^https://")
+	switch {
+	case http.MatchString(uri) || https.MatchString(uri):
+		return NewHttpReadSeeker(uri)
+	default:
+		return os.Open(uri)
+	}
+	return nil, io.ErrNoProgress
 }
 func NewReadSeeker(uri string) (io.ReadSeeker, error) {
 	http, _ := regexp.Compile("^http://")
@@ -248,9 +261,10 @@ func (s *HttpReadSeeker) Open() error {
 	}
 	return nil
 }
-func (s *HttpReadSeeker) Close() {
+func (s *HttpReadSeeker) Close() error {
 	s.position = 0
 	s.bufferSize = defaultBufferSize //TODO Close Buffer
+	return nil
 }
 func (s *HttpReadSeeker) Clone() *HttpReadSeeker { //Clone a new reader
 	reader, _ := NewHttpReadSeeker(s.Url)
