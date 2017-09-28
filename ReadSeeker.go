@@ -63,7 +63,9 @@ func Size(uri string) (int64, error) {
 	}
 	return int64(-1), io.ErrNoProgress
 }
-
+func Open(uri string) (io.ReadSeeker, error) {
+	return NewReadSeeker(uri)
+}
 func NewReadSeeker(uri string) (io.ReadSeeker, error) {
 	http, _ := regexp.Compile("^http://")
 	https, _ := regexp.Compile("^https://")
