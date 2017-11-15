@@ -74,6 +74,8 @@ func Open(uri string) (ReadSeekCloser, error) {
 	switch {
 	case http.MatchString(uri) || https.MatchString(uri):
 		return NewHttpReadSeeker(uri)
+	case strings.ToUpper(uri) == "STDIN":
+		return os.Stdin, nil
 	default:
 		return os.Open(uri)
 	}
@@ -85,6 +87,8 @@ func NewReadSeeker(uri string) (io.ReadSeeker, error) {
 	switch {
 	case http.MatchString(uri) || https.MatchString(uri):
 		return NewHttpReadSeeker(uri)
+	case strings.ToUpper(uri) == "STDIN":
+		return os.Stdin, nil
 	default:
 		return os.Open(uri)
 	}
