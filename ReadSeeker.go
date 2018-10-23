@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"math"
 	"net/http"
 	"os"
@@ -162,10 +163,11 @@ func (s *HttpReadSeeker) readHeader() (http.Header, error) {
 	rangeHeader := "bytes=0-1"
 	req.Header.Add("Range", rangeHeader)
 	resp, err := client.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
+	resp.Body.Close()
 
 	return resp.Header, err
 }
